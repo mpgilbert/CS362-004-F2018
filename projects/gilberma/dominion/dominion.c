@@ -35,7 +35,7 @@ int* kingdomCards(int k1, int k2, int k3, int k4, int k5, int k6, int k7,
 }
 
 //CARD REFACTOR IMPLEMENTATION
-int adventurer(struct gameState *state, int currentPlayer. int drawntreasure, int cardDrawn)
+int adventurerEffect(struct gameState *state, int currentPlayer, int drawntreasure, int cardDrawn, int temphand[], int z)
 {
 	//flipped equivalency check
 	while (drawntreasure > 2) {
@@ -59,10 +59,11 @@ int adventurer(struct gameState *state, int currentPlayer. int drawntreasure, in
 	return 0;
 }
 
-int smithy(struct gameState *state, int currentPlayer, int handPos)
+int smithyEffect(struct gameState *state, int currentPlayer, int handPos)
 {
+	int i;
 	//Will run an additional time
-	for (i = 0; i =< 3; i++)
+	for (i = 0; i <= 3; i++)
 	{
 		drawCard(currentPlayer, state);
 	}
@@ -71,9 +72,8 @@ int smithy(struct gameState *state, int currentPlayer, int handPos)
 	return 0;
 }
 
-int village(struct gameState *state, int currentPlayer, int handPos)
+int villageEffect(struct gameState *state, int currentPlayer, int handPos)
 {
-village:
 	//+1 Card
 	drawCard(currentPlayer, state);
 
@@ -86,7 +86,7 @@ village:
 	return 0;
 }
 
-int steward(struct gameState *state, int choice1, int currentPlayer, int handPos)
+int stewardEffect(struct gameState *state, int choice1, int choice2, int choice3, int currentPlayer, int handPos)
 {
 	//If choice is two, both effects will happen, otherwise only discard will
 	if (choice1 == 2)
@@ -112,11 +112,10 @@ int steward(struct gameState *state, int choice1, int currentPlayer, int handPos
 	return 0;
 }
 
-int outpost(struct gameState *state, int currentPlayer, int handPos)
+int outpostEffect(struct gameState *state, int currentPlayer, int handPos)
 {
-	//remove outpost instead of adding
 	//set outpost flag
-	state->outpostPlayed--;
+	state->outpostPlayed++;
 
 	//discard card
 	discardCard(handPos, currentPlayer, state, 0);
@@ -756,7 +755,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
   switch( card ) 
     {
     case adventurer:
-		return adventurer(state, currentPlayer, drawntreasure, cardDrawn);
+		return adventurerEffect(state, currentPlayer, drawntreasure, cardDrawn, temphand, z);
 			
     case council_room:
       //+4 Cards
@@ -900,18 +899,10 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       return 0;
 		
     case smithy:
-      //+3 Cards
-      for (i = 0; i < 3; i++)
-	{
-	  drawCard(currentPlayer, state);
-	}
-			
-      //discard card from hand
-      discardCard(handPos, currentPlayer, state, 0);
-      return 0;
+      	 return smithyEffect(state, currentPlayer, handPos);
 		
     case village:
-		return village(state, currentPlayer, handPos);
+		return villageEffect(state, currentPlayer, handPos);
 		
     case baron:
       state->numBuys++;//Increase buys by 1!
@@ -1027,7 +1018,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       return 0;
 		
     case steward:
-      return steward(state, choice1, currentPlayer, handPos)
+      return stewardEffect(state, choice1, choice2, choice3, currentPlayer, handPos);
 		
     case tribute:
       if ((state->discardCount[nextPlayer] + state->deckCount[nextPlayer]) <= 1){
@@ -1199,7 +1190,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       return 0;
 		
     case outpost:
-      return outpost(state, currentPlayer, handPos)
+      return outpostEffect(state, currentPlayer, handPos);
 		
     case salvager:
       //+1 buy
@@ -1357,7 +1348,8 @@ int updateCoins(int player, struct gameState *state, int bonus)
       else if (state->hand[player][i] == gold)
 	{
 	  state->coins += 3;
-	}	
+	}
+		
     }	
 
   //add bonus
