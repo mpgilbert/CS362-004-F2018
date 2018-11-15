@@ -108,7 +108,7 @@ randomtest: randomtestadventurer.c randomtestcard1.c randomtestcard2.c
 	echo "randomtestcard2.c:" >> randomtestcard2.out
 	gcc -o randomtestcard2 dominion.c rngs.c randomtestcard2.c $(CFLAGS)
 	randomtestcard2 >> randomtestcard2.out
-	gcov dominon.c -b >> randomtestcard2.out
+	gcov dominion.c -b >> randomtestcard2.out
  
 player: player.c interface.o
 	gcc -o player player.c -g  dominion.o rngs.o interface.o $(CFLAGS)
